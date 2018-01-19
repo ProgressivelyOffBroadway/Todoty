@@ -70,14 +70,14 @@ else
   # Split the lines into separate array indexes
   lines = matches.lines()
   # Iterate over the lines
-  puts "+-------------+----------+----------------------------------------------------------+"
-  puts "|   TODO ID   |   LINE   |   MESSAGE                                               |"
-  puts "+-------------+----------+----------------------------------------------------------+"
+  puts "+--------------+-----------------+--------------+-----------------------------------+"
+  puts "|     FILE     |     TODO ID     |     LINE     |     MESSAGE                       |"
+  puts "+--------------+-----------------+--------------+-----------------------------------+"
   lines.each_with_index do | line, index |
     line_no = line[0]
     message = message( line )
     message.delete!( "\n" )
-    message_len = message.length + 30
+    message_len = message.length + 53
     padding_len = 85 - message_len
     if padding_len < 0
       excess = ( padding_len * -1 ) + 4
@@ -87,7 +87,15 @@ else
     else
       padding = " "*( padding_len - 1 )
     end
-    puts "|      #{index}      |     #{line_no}    |   #{message}#{padding} |"
-    puts "+-------------+----------+----------------------------------------------------------+"
+    if file.length > 11
+      file = file[ 0 ... 7 ]
+      file += "..."
+      file_padding = " "
+    else
+      file_padding_len = 11	- file.length
+      file_padding = " " * file_padding_len
+    end
+    puts "|   #{file}#{file_padding}|      #{index}          |     #{line_no}        |   #{message}#{padding} |"
+    puts "+--------------+-----------------+--------------+-----------------------------------+"
   end
 end
