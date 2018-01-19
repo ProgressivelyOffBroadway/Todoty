@@ -1,11 +1,12 @@
 #!/usr/bin/env ruby 
 
-require './styling'
+#require './styling'
 require 'optparse'
 
 file = ""
 opts_ = ""
 options = {}
+
 ### Handle flags ###
 OptionParser.new do |opts|
   # Banner for the CLI help documentation
@@ -61,15 +62,32 @@ end
 
 # Split the found matches if there are any
 if matches.length == 0
-  puts "Todoty found nothing. Either you aren't logging tasks or you're all caught up! Congrats?"
+  puts "+------------------------------------------------------------------------------------------+"
+  puts "| Todoty found nothing. Either you aren't logging tasks or you're all caught up! Congrats? |"
+  puts "+------------------------------------------------------------------------------------------+"
 # Logic on matches
 else
   # Split the lines into separate array indexes
   lines = matches.lines()
   # Iterate over the lines
+  puts "+-------------+----------+----------------------------------------------------------+"
+  puts "|   TODO ID   |   LINE   |   Messsage                                               |"
+  puts "+-------------+----------+----------------------------------------------------------+"
   lines.each_with_index do | line, index |
     line_no = line[0]
     message = message( line )
-    puts "#{index} \t Line: #{line_no} \t Message: #{message}"
+    message.delete!( "\n" )
+    message_len = message.length + 30
+    padding_len = 85 - message_len
+    if padding_len < 0
+      excess = ( padding_len * -1 ) + 4
+      message = message[ 0 ... -excess ]
+      message += "..."
+      padding = ""
+    else
+      padding = " "*( padding_len - 1 )
+    end
+    puts "|      #{index}      |     #{line_no}    |   #{message}#{padding} |"
+    puts "+-------------+----------+----------------------------------------------------------+"
   end
 end
