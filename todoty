@@ -71,7 +71,7 @@ else
   lines = matches.lines()
   # Iterate over the lines
   puts "+-------------+----------+----------------------------------------------------------+"
-  puts "|   TODO ID   |   LINE   |   Messsage                                               |"
+  puts "|   TODO ID   |   LINE   |   MESSAGE                                               |"
   puts "+-------------+----------+----------------------------------------------------------+"
   lines.each_with_index do | line, index |
     line_no = line[0]
