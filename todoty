@@ -18,6 +18,7 @@ OptionParser.new do |opts|
   # Help flag
   opts.on("-h", "--help", "Print available commands") do
     puts opts
+    exit 
   end
   # Directory flag
   opts.on("-d", "--directory [DIR]", "Run todoty on directory" ) do |d|
@@ -54,6 +55,7 @@ end
 
 ### Outputs the TODOs ###
 def output_todo( file, matches )
+  # Ignores the todoty file and README
   if file == 'todoty' || file == 'README.md'
     return
   end
@@ -96,6 +98,7 @@ end
 
 ### Main script ###
 matches = ""
+# If the directory flag has been specified, pull up all TODOs in the current directory
 if directory != ""
   Dir.glob( "*" ) do |file|
     if file != ""
