@@ -107,7 +107,7 @@ matches = ""
 if directory != ""
   Dir.glob( directory ) do |file|
     if file != ""
-      if file == "todoty" || file == "README.md"
+      if file == "todoty"
         next
       end
       matches = %x{grep --ignore-case -n todo '#{file}'}
