@@ -5,7 +5,9 @@ require 'optparse'
 
 file = ""
 opts_ = ""
+directory = ""
 options = {}
+display = true;
 
 ### Handle flags ###
 OptionParser.new do |opts|
@@ -35,11 +37,14 @@ end.parse!
 # If there are no flags check that there is a file specified and then use that
 if options.length == 0
   if ARGV.length > 0
-    file = ARGV[0]
+    file = ARGV[ 0 ]
   else
     # Otherwise just print the help documentation
     puts opts_
+    display = false;
   end
+else
+  directory = options[:directory]
 end
 
 ### Utilities ###
@@ -52,33 +57,35 @@ def message( line )
   return message
 end
 
-### Main script ###
-matches = ""
-
-# If the file has been given, run grep
-if file != ""
-  matches = %x{grep --ignore-case -n todo '#{file}'}
-end
-
-# Split the found matches if there are any
-if matches.length == 0
-  puts "+------------------------------------------------------------------------------------------+"
-  puts "| Todoty found nothing. Either you aren't logging tasks or you're all caught up! Congrats? |"
-  puts "+------------------------------------------------------------------------------------------+"
-# Logic on matches
-else
+### Outputs the TODOs ###
+def output_todo( file, matches )
+  if file == 'todoty' || file == 'README.md'
+    return
+  end
   # Split the lines into separate array indexes
   lines = matches.lines()
   # Iterate over the lines
-  puts "+--------------+-----------------+--------------+-----------------------------------+"
-  puts "|     FILE     |     TODO ID     |     LINE     |     MESSAGE                       |"
-  puts "+--------------+-----------------+--------------+-----------------------------------+"
+  file_len = 12 + file.length
+  file_padding_len = 100 - file_len
+  file_padding = ""
+  if file_padding_len > 0
+    file_padding += " " * ( file_padding_len - 1 )
+  else
+    file_padding_len = ( file_padding_len * -1 ) + 4
+    file = file[ 0 ... -file_padding_len ]
+    file += "..."
+  end
+  puts "+--------------------------------------------------------------------------------------------------+"
+  puts "|     FILE: #{file}#{file_padding}|"
+  puts "+-----------------+--------------+-----------------------------------------------------------------+"
+  puts "|     TODO ID     |     LINE     |     MESSAGE                                                     |"
+  puts "+-----------------+--------------+-----------------------------------------------------------------+"
   lines.each_with_index do | line, index |
     line_no = line[0]
     message = message( line )
     message.delete!( "\n" )
-    message_len = message.length + 53
-    padding_len = 85 - message_len
+    message_len = message.length + 40
+    padding_len = 100 - message_len
     if padding_len < 0
       excess = ( padding_len * -1 ) + 4
       message = message[ 0 ... -excess ]
@@ -87,15 +94,42 @@ else
     else
       padding = " "*( padding_len - 1 )
     end
-    if file.length > 11
-      file = file[ 0 ... 7 ]
-      file += "..."
-      file_padding = " "
-    else
-      file_padding_len = 11	- file.length
-      file_padding = " " * file_padding_len
+    puts "|     #{index}           |     #{line_no}        |     #{message}#{padding} |"
+    puts "+-----------------+--------------+-----------------------------------------------------------\------+"
+  end
+end
+  
+
+### Main script ###
+matches = ""
+if directory != ""
+  Dir.glob( "*" ) do |file|
+    if file != ""
+      matches = %x{grep --ignore-case -n todo '#{file}'}
     end
-    puts "|   #{file}#{file_padding}|      #{index}          |     #{line_no}        |   #{message}#{padding} |"
-    puts "+--------------+-----------------+--------------+-----------------------------------+"
+    
+    # Split the found matches if there are any
+    if display 
+      # Logic on matches
+      if matches.length != 0
+        output_todo( file, matches )
+      end
+    end
+  end
+else
+  file = ARGV[ 0 ]
+  if file != ""
+    matches = %x{grep --ignore-case -n todo '#{file}'}
+  end
+  # Split the found matches if there are any
+  if display 
+    if matches.length == 0
+      puts "+--------------------------------------------------------------------------------------------------+"
+      puts "| Todoty found nothing. Either you aren't logging tasks or you're all caught up! Congrats?         |"
+      puts "+--------------------------------------------------------------------------------------------------+"
+    # Logic on matches
+    else
+      output_todo( file, matches )
+    end
   end
 end
