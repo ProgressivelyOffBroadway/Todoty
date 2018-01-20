@@ -40,7 +40,6 @@ if options.length == 0
     display = false;
   end
 else
-  directory = ""
   if options[:directory] == nil
     directory = "*"
   else
