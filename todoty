@@ -21,7 +21,7 @@ OptionParser.new do |opts|
     exit 
   end
   # Directory flag
-  opts.on("-d", "--directory [DIR]", "Run todoty on directory" ) do |d|
+  opts.on("-d", "--directory [DIR]", "Run todoty on directory, defaults to current\n\t\t\t\t     directory unless path is specified" ) do |d|
     options[:directory] = d
   end
   # Explicit file flag
@@ -40,7 +40,12 @@ if options.length == 0
     display = false;
   end
 else
-  directory = options[:directory]
+  directory = ""
+  if options[:directory] == nil
+    directory = "*"
+  else
+    directory += "*"
+  end
 end
 
 ### Utilities ###
@@ -56,7 +61,7 @@ end
 ### Outputs the TODOs ###
 def output_todo( file, matches )
   # Ignores the todoty file and README
-  if file == 'todoty' || file == 'README.md'
+  if file == 'todoty'
     return
   end
   # Split the lines into separate array indexes
@@ -100,8 +105,11 @@ end
 matches = ""
 # If the directory flag has been specified, pull up all TODOs in the current directory
 if directory != ""
-  Dir.glob( "*" ) do |file|
+  Dir.glob( directory ) do |file|
     if file != ""
+      if file == "todoty" || file == "README.md"
+        next
+      end
       matches = %x{grep --ignore-case -n todo '#{file}'}
     end
     # Split the found matches if there are any
