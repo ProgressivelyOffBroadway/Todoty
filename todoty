@@ -60,10 +60,6 @@ end
 
 ### Outputs the TODOs ###
 def output_todo( file, matches )
-  # Ignores the todoty file and README
-  if file == 'todoty'
-    return
-  end
   # Split the lines into separate array indexes
   lines = matches.lines()
   # Iterate over the lines
