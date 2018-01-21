@@ -99,6 +99,7 @@ end
 ### Main script ###
 matches = ""
 # If the directory flag has been specified, pull up all TODOs in the current directory
+# or the directory specified by the user
 if directory != ""
   Dir.glob( directory ) do |file|
     if file != ""
@@ -115,6 +116,7 @@ if directory != ""
       end
     end
   end
+# Otherwise pull up all TODOs on the input file 
 else
   file = ARGV[ 0 ]
   if file != ""
