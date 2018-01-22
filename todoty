@@ -39,6 +39,10 @@ if options.length == 0
     puts opts_
     display = false;
   end
+# If the directory flag has been entered we check for a directory path. If the directory
+# path is null ( nil in ruby ) then we explore the current directory ( path = * ), otherwise
+# add * to the input file path to explore every file in that directory. The reason we're using
+# * to represent the files in a directory is we explore them through Dir.glob 
 else
   if options[:directory] == nil
     directory = "*"
